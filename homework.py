@@ -26,7 +26,7 @@ class Calculator:
 
 
 class Record:
-    def __init__(self, amount, date=None, comment):
+    def __init__(self, amount, comment, date=None):
         self.amount = amount
         self.comment = comment
         if date is not None:
@@ -46,8 +46,8 @@ class CaloriesCalculator(Calculator):
 
 
 class CashCalculator(Calculator):
-    USD_RATE = 70
-    EURO_RATE = 80
+    USD_RATE = 70.0
+    EURO_RATE = 80.0
     RUB_RATE = 1.0
 
     def get_today_cash_remained(self, currency):
@@ -58,12 +58,12 @@ class CashCalculator(Calculator):
             'rub': ('руб', self.RUB_RATE),
         }
         sign, rate = currencies.get(currency)
-        if cash_remained == 0:
-            return(f'Денег нет, держись')
-        if cash_remained > 0:
-            return(f'На сегодня осталось {cash_remained} {sign}')
-        if cash_remained < 0:
-            return (f'Денег нет, держись: твой долг {cash_remained} {sign}')
-
+        cash_remained = round(cash_remained / rate, 2)
         if currency not in currencies:
             return 'No such currency.'
+        if cash_remained == 0:
+            return 'Денег нет, держись'
+        if cash_remained > 0:
+            return f'На сегодня осталось {cash_remained} {sign}'
+        cash_remained = abs(cash_remained)
+        return f'Денег нет, держись: твой долг - {cash_remained} {sign}'
